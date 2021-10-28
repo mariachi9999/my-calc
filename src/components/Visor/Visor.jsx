@@ -1,26 +1,51 @@
-import styles from "./Visor.module.css"
+import styles from "./Visor.module.css";
+import formulas from "../../helpers/operations";
 
-const Visor = ({symbol, color, setOperando, setOperator, operation, setFloat, float,operando, resultado}) => {
+const Visor = ({
+  symbol,
+  color,
+  setOperando,
+  setOperator,
+  operation,
+  setFloat,
+  float,
+  operando,
+  resultado,
+}) => {
+  const operations = formulas();
 
-  
-  const handleClick= (e)=>{
-    
-    console.log(e.target.id)
+  const handlePress = (e) => {
+    console.log(e);
+    console.log(e.key);
+    console.log(operations[e.key]);
+    if (operations[e.key]) {
+      operations[e.key] === "=" ? setOperator("=") : setOperator(e.key);
+    }
+  };
 
-    Number.isInteger(parseInt(e.target.name)) && setOperando((operando)=>parseFloat(operando.toString().concat(float,e.target.name)))
-
-    !Number.isInteger(parseInt(e.target.name)) && e.target.id !=="to_float" && setOperator(e.target.id)
-
-    !Number.isInteger(parseInt(e.target.name)) && e.target.id ==="to_float" && float==="" && setFloat(".") 
-
-
-  }
+  const handleClick = (e) => {
+    console.log(e);
+    let valor = parseFloat(e.target.value);
+    if (!isNaN(valor)) {
+      setOperando(valor);
+    }
+    if (isNaN(valor)) {
+      setOperator(e.nativeEvent.data);
+    }
+  };
 
   return (
     <>
-      <input type="number" id={styles.visor} onClick={handleClick} value={operando ? operando : resultado}></input>
+      <input
+        type="number"
+        id={styles.visor}
+        onChange={handleClick}
+        onKeyDown={handlePress}
+        value={operando === 0 ? "" : operando}
+        autoFocus
+      ></input>
     </>
-  )
-}
+  );
+};
 
-export default Visor
+export default Visor;

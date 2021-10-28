@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Button from "../Button/Button";
 import styles from "./Keyboard.module.css";
-import data from "../../data/buttons";
-import formulas from "../../data/operations";
+import data from "../../helpers/buttons";
+import formulas from "../../helpers/operations";
 import Visor from "../Visor/Visor";
 
 const Keyboard = () => {
@@ -14,11 +14,10 @@ const Keyboard = () => {
   const [operator, setOperator] = useState("");
   const [storedoperator, setStoreoperator] = useState("");
   const [operation, setOperation] = useState("");
-  const [float, setFloat] = useState("")
-
+  const [float, setFloat] = useState("");
 
   useEffect(() => {
-    if (operator === "plus_minus") {
+    if (operator === "±") {
       if (operando !== 0) {
         setOperando(operando * -1);
         setOperator("");
@@ -80,10 +79,10 @@ const Keyboard = () => {
         setOperator(0);
         setStoreoperator(0);
         setOperation("");
-        setFloat("")
+        setFloat("");
       } else {
-        if (operator === "equal") {
-          let new_result = resultado + operando;
+        if (operando && operator === "=") {
+          let new_result = operations[storedoperator](resultado, operando);
           setOperation(
             `${resultado} ${storedoperator} ${operando} ${operator} ${new_result}`
           );
@@ -91,7 +90,7 @@ const Keyboard = () => {
           setOperando(0);
           setStoreoperator("");
           setOperator("");
-          setFloat("")
+          setFloat("");
         }
 
         if (operator !== "") {
@@ -100,22 +99,19 @@ const Keyboard = () => {
             setOperando(0);
             setStoreoperator(operator);
             setOperator("");
-            setFloat("")
-
+            setFloat("");
           } else {
-            if (storedoperator) {
+            if (storedoperator && storedoperator !== "=") {
               let new_result = operations[storedoperator](resultado, operando);
               setResultado(new_result);
               setOperando(0);
               setStoreoperator(operator);
               setOperator("");
-              setFloat("")
-
+              setFloat("");
             }
             setStoreoperator(operator);
             setOperator("");
-            setFloat("")
-
+            setFloat("");
           }
         }
       }
@@ -128,15 +124,18 @@ const Keyboard = () => {
     }
   }, [storedoperator]);
 
-
   return (
     <div className={styles.gridContainer}>
       <button className={styles.operation}>
         {operation ? operation : resultado > 0 ? resultado : ""}
       </button>
       <button className={styles.result}>
-        <Visor/>
-        
+        <Visor
+          setOperando={setOperando}
+          setOperator={setOperator}
+          setFloat={setFloat}
+          operando={operando}
+        />
       </button>
       {symbols.map((symbol) => (
         <Button
@@ -144,7 +143,7 @@ const Keyboard = () => {
           setOperando={setOperando}
           setOperator={setOperator}
           symbol={symbol.symbol}
-          operation={symbol.operation}
+          operation={symbol.symbol}
           color={
             Number.isInteger(symbol.symbol) ||
             symbol.symbol === "±" ||
