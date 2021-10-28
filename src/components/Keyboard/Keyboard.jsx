@@ -3,6 +3,7 @@ import Button from "../Button/Button";
 import styles from "./Keyboard.module.css";
 import data from "../../data/buttons";
 import formulas from "../../data/operations";
+import Visor from "../Visor/Visor";
 
 const Keyboard = () => {
   const symbols = data();
@@ -134,7 +135,8 @@ const Keyboard = () => {
         {operation ? operation : resultado > 0 ? resultado : ""}
       </button>
       <button className={styles.result}>
-        {operando ? operando : resultado}
+        <Visor/>
+        
       </button>
       {symbols.map((symbol) => (
         <Button
